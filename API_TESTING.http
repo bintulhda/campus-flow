@@ -1,0 +1,124 @@
+// This file contains sample API calls for testing CampusFlow
+
+// ============================================
+// 1. AUTHENTICATION
+// ============================================
+
+// Register a club
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "clubName": "Tech Club",
+  "email": "techclub@nit.com",
+  "password": "password123",
+  "phone": "9999999999",
+  "contactPerson": "John Doe"
+}
+
+// Login a club
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "techclub@nit.com",
+  "password": "password123"
+}
+
+// ============================================
+// 2. VENUES
+// ============================================
+
+// Get all venues
+GET http://localhost:5000/api/venues
+
+// Create a new venue
+POST http://localhost:5000/api/venues
+Content-Type: application/json
+
+{
+  "name": "Seminar Hall A",
+  "capacity": 100,
+  "location": "Building 1",
+  "description": "Perfect for seminars and workshops",
+  "amenities": ["Projector", "Whiteboard", "AC", "WiFi"]
+}
+
+// ============================================
+// 3. BOOKINGS (Requires JWT Token)
+// ============================================
+
+// Submit a booking
+POST http://localhost:5000/api/bookings
+Content-Type: application/json
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+{
+  "venueId": "VENUE_ID_FROM_DB",
+  "date": "2026-02-20",
+  "timeSlot": "9-11",
+  "eventDescription": "Annual Tech Fest",
+  "attendees": 50
+}
+
+// Get my club's bookings
+GET http://localhost:5000/api/bookings/my-bookings
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+// Get all bookings (admin)
+GET http://localhost:5000/api/bookings
+
+// ============================================
+// TESTING CONFLICT DETECTION
+// ============================================
+
+// Submit booking 1 (should be APPROVED)
+POST http://localhost:5000/api/bookings
+Content-Type: application/json
+Authorization: Bearer TOKEN1
+
+{
+  "venueId": "VENUE_ID",
+  "date": "2026-02-22",
+  "timeSlot": "9-11",
+  "eventDescription": "Event 1",
+  "attendees": 30
+}
+
+// Submit booking 2 (same venue, same date, same slot - should be REJECTED)
+POST http://localhost:5000/api/bookings
+Content-Type: application/json
+Authorization: Bearer TOKEN2
+
+{
+  "venueId": "VENUE_ID",
+  "date": "2026-02-22",
+  "timeSlot": "9-11",
+  "eventDescription": "Event 2",
+  "attendees": 25
+}
+
+// Submit booking 3 (same venue, same date, DIFFERENT slot - should be APPROVED)
+POST http://localhost:5000/api/bookings
+Content-Type: application/json
+Authorization: Bearer TOKEN1
+
+{
+  "venueId": "VENUE_ID",
+  "date": "2026-02-22",
+  "timeSlot": "11-1",
+  "eventDescription": "Event 3",
+  "attendees": 40
+}
+
+// ============================================
+// NOTES
+// ============================================
+
+/*
+1. Replace YOUR_JWT_TOKEN_HERE with actual JWT from login response
+2. Replace VENUE_ID_FROM_DB with actual venue ID from database
+3. TIME SLOTS: 9-11, 11-1, 2-4, 4-6
+4. Email notifications require setup in .env
+5. Use same date with different time slots to test approval flow
+*/

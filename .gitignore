@@ -1,0 +1,14 @@
+node_modules/
+.env
+.DS_Store
+*.log
+npm-debug.log*
+dist/
+.vite/
+.idea/
+.vscode/
+*.swp
+*.swo
+env/
+venv/
+__pycache__/
